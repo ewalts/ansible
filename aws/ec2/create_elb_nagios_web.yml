@@ -1,0 +1,23 @@
+---
+- name: Create ELB for Nagios Web Front-end
+  hosts: localhost
+  gather_facts: False
+
+
+  tasks:
+
+    - name: create auto classic elb for http
+      amazon.aws.elb_classic_lb:
+        state: present
+        name: 'NAG-Web-Front-ELB'
+        security_group_ids: 'sg-0c18d8d383c8a4184'
+        subnets: 'subnet-064aea0316801219e'
+        listeners:
+          - protocol: http
+            load_balancer_port: 80
+            instance_port: 80
+        stickiness:
+          type: loadbalancer
+          enabled: true
+          expiration: 300
+

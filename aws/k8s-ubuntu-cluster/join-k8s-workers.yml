@@ -1,0 +1,16 @@
+- hosts: k8swn
+  become: yes
+  gather_facts: yes
+
+  tasks:
+   - name: Retreive join command 
+     become: yes
+     copy:
+       src: /tmp/k8s_worker_join.sh
+       dest: /tmp/k8s_worker_join.sh
+       mode: 0777
+
+   - name: Join workers to the k8s cluster.
+     become: yes
+     command: sh /tmp/k8s_worker_join.sh
+     register: joined_or_not

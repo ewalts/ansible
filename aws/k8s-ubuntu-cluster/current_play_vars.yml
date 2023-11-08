@@ -1,0 +1,10 @@
+###>  Vars generated from generate_vars_from_play.php from rewbin.org Richard Walts, Inc.
+    ###>   New EC2 Instance
+
+ew_host: monday_docker 
+ew_ssh_key: sc-k8s 
+ew_vpc_subnet: subnet-0be3c06618d977ac0 
+ew_ami_id: ami-0c5dff571d748230f 
+ew_sg: launch-wizard-3 
+ew_env: k8s
+my_ssh_key_path: /home/eric/wrk/cloud/.secure/sc-k8s/sc-k8s.pem

@@ -1,0 +1,24 @@
+---
+- name: AWS - Create EC2 Instance
+  vars_files:
+    - ~/wrk/cloud/aws/vars/my_aws_creds.yml
+    - vars/this_play_vars.yml
+  hosts: localhost
+  gather_facts: False
+
+  tasks:
+
+    - name: New EC2 Instance
+      amazon.aws.ec2_instance:
+        name: ew_test_play2
+        key_name: 'sc-k8s'
+        vpc_subnet_id: subnet-0be3c06618d977ac0
+        instance_type: t2.micro
+        security_group: launch-wizard-3
+        network:
+          assign_public_ip: true
+        image_id: ami-00ee4df451840fa9d
+        tags:
+          Environment: new_dev
+      register: result
+

@@ -1,0 +1,26 @@
+---
+- hosts: localhost
+  gather_facts: False
+  vars_files:
+    - current_play_vars.yml
+  tasks:
+    - name: New EC2 Instance
+      amazon.aws.ec2_instance:
+        name: "{{ item }}"
+        key_name: "{{ ew_ssh_key }}"
+        vpc_subnet_id: "{{ ew_vpc_subnet }}"
+        instance_type: t2.micro
+        security_group: default
+        network:
+          assign_public_ip: true
+        image_id: "{{ ew_ami_id }}"
+        tags:
+          environment: "{{ ew_env }}"
+      loop:
+        - k8s-cp
+        - k8s-wn1
+        - k8s-wn2
+      register: ec2
+
+    - name: Create new hosts file
+      ansible.builtin.script: gen-aws-hosts.sh
