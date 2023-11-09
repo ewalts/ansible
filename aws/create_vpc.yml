@@ -1,0 +1,13 @@
+- name: New VPC
+  hosts: localhost
+  tasks: 
+    - name: create a VPC 
+      amazon.aws.ec2_vpc_net:
+        name: Nagios-Monitoring
+        cidr_block: 10.10.0.0/16
+        region: us-west-2
+        tags:
+          application: nagios 
+          purpose: web-front
+        tenancy: default
+    

@@ -9,7 +9,7 @@
         name: "{{ item }}"
         key_name: "{{ ew_ssh_key }}"
         vpc_subnet_id: "{{ ew_vpc_subnet }}"
-        instance_type: t2.micro
+        instance_type: t2.medium
         security_group: default
         network:
           assign_public_ip: true

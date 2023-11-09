@@ -1,0 +1,26 @@
+---
+- hosts: localhost
+  gather_facts: False
+  vars_files: 
+    - '../vars/secret_vars_ericw.yml' 
+    - '../vars/ew_default_vars.yaml'
+  module_defaults:
+    group/aws:
+      aws_access_key: '{{ ericw_access_key }}'
+      aws_secret_key: '{{ ericw_secret_key }}'
+      region: '{{ ew_region }}'
+
+  tasks:
+    - amazon.aws.autoscaling_group:
+        name: nag_asg
+        launch_template: 
+          launch_template_id: 'lt-0fef7f9e19c63a1a4'
+        health_check_period: 60
+        health_check_type: ELB
+        replace_all_instances: True
+        min_size: 3
+        max_size: 5
+        desired_capacity: 3
+        region: us-west-2
+
+

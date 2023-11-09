@@ -1,0 +1,11 @@
+---
+- name: Delete Auto-scaling Group
+  hosts: localhost
+  gather_facts: False
+
+  tasks:
+
+    - name: delete auto scaling group
+      amazon.aws.autoscaling_group:
+        name: 'nag_asg'
+        state: 'absent'

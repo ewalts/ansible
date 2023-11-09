@@ -1,0 +1,14 @@
+###>  Vars generated from generate_vars_from_play.php from rewbin.org Richard Walts, Inc.
+###>   AWS - Create EC2 Instance
+
+    ###>   New EC2 Instance
+
+key_name: MY_KEY
+subnet: MY_SUBNET_ID
+ins-type: t2.medium
+ami-id: My_AMI_ID
+new_env: k8s
+loop: 
+  - west-wkr1
+  - west-wkr2
+  - west-wkr3 

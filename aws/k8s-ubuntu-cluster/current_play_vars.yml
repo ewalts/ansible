@@ -1,7 +1,7 @@
 ###>  Vars generated from generate_vars_from_play.php from rewbin.org Richard Walts, Inc.
     ###>   New EC2 Instance
 
-ew_host: monday_docker 
+ew_host: nag-k8s-cp 
 ew_ssh_key: sc-k8s 
 ew_vpc_subnet: subnet-0be3c06618d977ac0 
 ew_ami_id: ami-0c5dff571d748230f 

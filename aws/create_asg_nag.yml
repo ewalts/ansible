@@ -1,0 +1,23 @@
+---
+- name: Create ASG for Nagios Kuberentes Cluster
+  hosts: localhost
+  gather_facts: False
+
+
+  tasks:
+
+    - name: create auto scaling group
+      amazon.aws.autoscaling_group:
+        name: 'nag_asgi'
+        availability_zones: [ 'us-west-2c' ]
+        load_balancers: ['NAG-Web-Front-ELB']
+        launch_template: 
+          launch_template_id: 'lt-0fef7f9e19c63a1a4'
+          version: 4
+        health_check_period: 60
+        health_check_type: 'ELB'
+        replace_all_instances: True
+        min_size: 2
+        max_size: 3
+        desired_capacity: 2
+        region: 'us-west-2'

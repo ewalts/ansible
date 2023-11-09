@@ -1,0 +1,110 @@
+---
+
+- hosts: k8scp
+  gather_facts: false
+  tasks:
+
+    - name: Wait for ssh
+      ansible.builtin.wait_for:
+        port: 22
+        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+        search_regex: OpenSSH
+        delay: 10
+      connection: local
+
+    - name: Start kubelet
+      ansible.builtin.shell: |
+        sudo systemctl enable kubelet
+        sudo systemctl start kubelet
+
+    - name: Initialize k8s cluster
+      ansible.builtin.shell: | 
+        sudo kubeadm init --pod-network-cidr=10.96.0.0/16
+
+    - name: Create join token for worker nodes
+      ansible.builtin.shell: |
+        sudo kubeadm token create  --print-join-command
+      register: kubernetes_join_command
+
+    - debug:
+        msg: "{{ kubernetes_join_command.stdout }}"
+
+    - name: Save join command to local file.
+      delegate_to: localhost
+      connection: local
+      copy:
+        content: "{{ kubernetes_join_command.stdout_lines[0] }}"
+        dest: /tmp/kubernetes_join_command
+        mode: 0777
+
+    - name: Create .kube directory
+      ansible.builtin.file:
+        path: $HOME/.kube
+        state: directory
+        mode: 0755
+
+    - name: Create kube user kubeconfig file from admin.conf
+      become: true
+      ansible.builtin.copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/ubuntu/.kube/config
+        remote_src: yes
+
+    - name: Copy Tigera Operator for Calico
+      become: true
+      copy:
+        src: calico/rewbin_tigera-operator.yaml
+        dest: /tmp/rewbin_tigera-operator.yaml
+        owner: ubuntu
+        group: ubuntu
+        mode: 0644
+
+    - name: Copy Calico control pod
+      become: true
+      copy:
+        src: calico/calico-ctl-pod.yaml
+        dest: /tmp/calico-ctl-pod.yaml
+        owner: ubuntu
+        group: ubuntu
+        mode: 0644
+
+    - name: Copy custom settings for Calico
+      become: true
+      copy:
+        src: calico/custom-resources.yaml
+        dest: /tmp/custom-resources.yaml
+        owner: ubuntu
+        group: ubuntu
+        mode: 0644
+
+    - name: Install CNI plugin Tigera Operator Calico
+      ansible.builtin.shell: |
+        kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.3/manifests/tigera-operator.yaml
+
+    - name: Delay play after Tigera 
+      ansible.builtin.wait_for:
+        timeout: 300
+
+    - name: Customize settings
+      ansible.builtin.shell: |
+        kubectl apply -f /tmp/custom-resources.yaml
+
+    - name: Apply ctl pod yaml
+      ansible.builtin.shell: |
+        kubectl apply -f /tmp/calico-ctl-pod.yaml
+
+
+    - name: Create join token for worker nodes
+      ansible.builtin.shell: |
+        sudo kubeadm token create  --print-join-command
+      register: kubernetes_join_command
+
+    - debug:
+        msg: "{{ kubernetes_join_command.stdout }}"
+
+    - name: Save join command to local file.
+      delegate_to: 
+      copy: 
+        content: "{{ kubernetes_join_command.stdout_lines[0] }}" 
+        dest: "/tmp/kubernetes_join_command" 
+        mode: 0777

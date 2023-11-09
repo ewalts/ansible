@@ -1,0 +1,24 @@
+---
+- name: AWS - Create EC2 Instance
+  vars_files:
+    - ~/.ssh/my_aws_creds.yml
+    - new-ubuntu-instance_vars.yml
+  hosts: localhost
+  gather_facts: False
+
+  tasks:
+
+    - name: New EC2 Instance
+      amazon.aws.ec2_instance:
+        name: "{{ item }}"
+        key_name: "{{ key_name }}"
+        vpc_subnet_id: "{{ subnet }}"
+        instance_type: "{{ ins-type }}"
+        security_group: 
+        network:
+          assign_public_ip: true
+        image_id: "{{ ami-id }}"
+        tags:
+          Environment: "{{ new_env }}"
+      register: result
+
