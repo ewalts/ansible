@@ -1,25 +1,32 @@
 ---
 
-Build Kubernetes Cluster in AWS on Ubuntu Instances
+Kubernetes Cluster in AWS on Ubuntu Instances
+---
+This deployment has been tested on 20.04 and 22.04, 
+..... things do change.
+
 ---
 
-This assumes you already have an Ubuntu ami that meets your compliance standards.
+You can run each play individually, but you will need to manually create any required vars/resources the scripts creates.
+
+Very easy to deploy a Kuberentes cluster.
+
+    $ cd $DEPLOYMENT_PATH/
+
+    $ ./create-ubuntu-k8s-cluster.sh -vvvv
+
+Requirements
 ---
 
-
-Define you custom vars in the  current_play_vars.yml file.
-
-First run this play to create the hosts.
-    ansible-playbook -i aws-hosts current_play.yml
-
-Pull the public IP addresses  with your ssh access key file path.
-
-    aws ec2 describe-network-interfaces | grep '     PublicIp' |awk '{print $2}'
-
-Edit the aws-hosts file adding the public IP address along with your ssh access key file path.
+1. Ansible installed and configured
+2. AWS cli/access roles functioning.
+3. You have created an Ubuntu AMI.
+4. Define your custom vars in the  [current_play_vars.yml|~/.ansible/current_play_vars.yml] file. 
 
 
-Then run this play.
+Kubernetes default restriction requires 2cpu on the instance.  The deployment currently configured to use t2.medium.
 
-    ansible-playbook -u ubuntu -i aws-hosts k8s_install.yml 
+
+TASK [Create the kube user account] **************************************************************************************************************************************************************************************************************************
+[WARNING]: 'append' is set, but no 'groups' are specified. Use 'groups' for appending new groups.This will change to an error in Ansible 2.14.
 

@@ -4,20 +4,20 @@
 ############################################################################################################
 #_#>
 
-rm -f aws-hosts
+rm -f inventory/aws-hosts
 rm /tmp/k8s_hosts
 echo '[local]
 localhost
 
-' >> aws-hosts
+' >> inventory/aws-hosts
 
-ansible-playbook -i aws-hosts current_play.yml $1
+ansible-playbook -i inventory/aws-hosts playbook/create_instances.yml $1
 
 
-my_ssh_key_path=$(cat current_play_vars.yml |grep my_ssh_key_path | awk '{print $2}')
+my_ssh_key_path=$(cat ~/.ansible/vars/current_play_vars.yml |grep my_ssh_key_path | awk '{print $2}')
 
 echo "
-[k8s]" >> aws-hosts
+[k8s]" >> inventory/aws-hosts
 hosts=$(aws ec2 describe-instances --filters Name=tag:environment,Values=k8s|grep PublicIpAddress |awk '{print $2}')
 priv_hosts=$(aws ec2 describe-instances --filters Name=tag:environment,Values=k8s|grep PrivateIpAddress |awk '{print $2}' \
  | sed -n '/^$/d;G;/^\(.*\n\).*\n\1$/d;H;P;a\ ')
@@ -28,7 +28,7 @@ k8scp="\n[k8scp]\n"
 k8swn="[k8swn]\n"
 for h in $hosts;
 do
-        echo "$h  ansible_ssh_private_key_file=$my_ssh_key_path" >> aws-hosts
+        echo "$h  ansible_ssh_private_key_file=$my_ssh_key_path" >> inventory/aws-hosts
         if [ $c = 0 ]
         then
 		echo "$h    k8s-cp" >> /tmp/pub_hosts
@@ -40,8 +40,8 @@ do
         fi
 	c=$((c+1))
 done
-echo -e $k8scp >> aws-hosts
-echo -e $k8swn >> aws-hosts
+echo -e $k8scp >> inventory/aws-hosts
+echo -e $k8swn >> inventory/aws-hosts
 
 ###> Create the hosts file with private ips
 c=0
@@ -57,14 +57,14 @@ do
         c=$((c+1))
 done
 
-wait 45
+#wait 45
 echo " Waiting for SSH on new instances."
 
-ansible-playbook -u ubuntu -i aws-hosts kube_user.yml $1
+ansible-playbook -u ubuntu -i inventory/aws-hosts playbook/kube_user.yml $1  ###> creates the kube user
 
-ansible-playbook -u ubuntu -i aws-hosts k8s_install.yml $1
+ansible-playbook -u ubuntu -i inventory/aws-hosts playbook/k8s_install.yml $1  ###> installs the kubernetes dependencies and applications
 
-ansible-playbook -u ubuntu -i aws-hosts cluster_init.yml $1
+ansible-playbook -u ubuntu -i inventory/aws-hosts playbook/cluster_init.yml $1  ###> initalizes control plane 
 
-ansible-playbook -u ubuntu -i aws-hosts join_k8s_workers.yml $1
+ansible-playbook -u ubuntu -i inventory/aws-hosts playbook/join_k8s_workers.yml $1  ###> joins the worker nodes
 

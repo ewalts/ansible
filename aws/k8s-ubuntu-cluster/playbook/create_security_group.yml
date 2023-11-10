@@ -1,0 +1,25 @@
+---
+- name: Create ASG for Nagios Kuberentes Cluster
+  hosts: localhost
+  gather_facts: False
+  tasks:
+    - name: create security group
+      amazon.aws.ec2_security_group:
+        name: 'k8s-mgmt-comm'
+        description: communication for kubernetes hosts
+        vpc_id: vpc-092b97107faca50b1
+        rules:
+          - proto: tcp
+            ports:
+              - 2379-2380
+              - 10250
+              - 10257
+              - 10259
+              - 6443
+              - 5473
+              - 4789
+              - 443
+              - 179
+              - 80
+              - 22
+            cidr_ip: 172.31.0.0/16

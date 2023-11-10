@@ -34,10 +34,6 @@
         group: ubuntu
         mode: 0644
 
-    - name: Find this hostname
-      ansible.builtin.shell: |
-        hostname $(cat /tmp/pub_hosts | grep  inventory_hostname | awk '{print $2}') 
-
     - name: Create the k8s modules file.
       ansible.builtin.file:
         path: /etc/modules-load.d/k8s.conf
