@@ -59,11 +59,11 @@
         group: ubuntu
         mode: 0644
 
-    - name: Copy Calico control pod
+    - name: Copy Calico configmap
       become: true
       copy:
-        src: calico/calico-ctl-pod.yaml
-        dest: /tmp/calico-ctl-pod.yaml
+        src: calico/calico-configmap.yaml
+        dest: /tmp/calico-configmap.yaml
         owner: ubuntu
         group: ubuntu
         mode: 0644
@@ -81,6 +81,10 @@
       ansible.builtin.shell: |
         kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.3/manifests/tigera-operator.yaml
 
+    - name: Add calico configmap
+      ansible.builtin.shell: |
+        kubectl apply -f /tmp/calico-configmap.yaml
+
     - name: Delay play after Tigera 
       ansible.builtin.wait_for:
         timeout: 300
@@ -89,10 +93,9 @@
       ansible.builtin.shell: |
         kubectl apply -f /tmp/custom-resources.yaml
 
-    - name: Apply ctl pod yaml
-      ansible.builtin.shell: |
-        kubectl apply -f /tmp/calico-ctl-pod.yaml
-
+    - name: Install cert-manager
+      shell:
+        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.2/cert-manager.yaml
 
     - name: Create join token for worker nodes
       ansible.builtin.shell: |
