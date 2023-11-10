@@ -1,0 +1,37 @@
+---
+###  For Ubuntu. Install and configure Kubernetes
+- hosts:  k8s
+  become: true
+  become_method: sudo
+  gather_facts: false
+  tasks:
+
+    - name: Wait for ssh
+      ansible.builtin.wait_for:
+        port: 22
+        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+        search_regex: OpenSSH
+        delay: 10
+      connection: local
+
+    - name: Copy k8s_hosts to remote
+      ansible.builtin.copy:
+        src: /tmp/k8s_hosts
+        dest: /tmp/k8s_hosts
+        owner: ubuntu
+        group: ubuntu
+        mode: 0644
+
+    - name: Update /etc/hosts with content k8s_hosts
+      ansible.builtin.shell: |
+	sudo cat /tmp/k8s_hosts >> /etc/hosts
+
+    - name: Set this hostname
+      ansible.builtin.shell: |
+        rm /etc/hostname
+
+    - name: Set this hostname
+      ansible.builtin.shell: |
+        cat /tmp/k8s_hosts | grep "{{ inventory_hostname }}" | awk '{print $1}' >> /etc/hostname
+
+

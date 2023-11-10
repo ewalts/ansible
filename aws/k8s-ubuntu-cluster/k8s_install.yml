@@ -14,6 +14,30 @@
         delay: 10
       connection: local
 
+    - name: Copy k8s_hosts to remote
+      ansible.builtin.copy:
+        src: /tmp/k8s_hosts
+        dest: /tmp/k8s_hosts
+        owner: ubuntu
+        group: ubuntu
+        mode: 0644
+
+    - name: Update /etc/hosts with content k8s_hosts
+      ansible.builtin.shell: |
+        sudo cat /tmp/k8s_hosts >> /etc/hosts
+
+    - name: Copy pub_hosts to remote
+      ansible.builtin.copy:
+        src: /tmp/pub_hosts
+        dest: /tmp/pub_hosts
+        owner: ubuntu
+        group: ubuntu
+        mode: 0644
+
+    - name: Find this hostname
+      ansible.builtin.shell: |
+        hostname $(cat /tmp/pub_hosts | grep  inventory_hostname | awk '{print $2}') 
+
     - name: Create the k8s modules file.
       ansible.builtin.file:
         path: /etc/modules-load.d/k8s.conf
