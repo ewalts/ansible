@@ -1,0 +1,7 @@
+[local]
+localhost
+
+
+
+[nginx_php]
+52.12.81.77  ansible_ssh_private_key_file=/home/eric/wrk/cloud/.secure/sc-k8s/sc-k8s.pem

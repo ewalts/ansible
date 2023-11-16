@@ -1,0 +1,30 @@
+---
+- name: AWS - Create EC2 Instance
+  vars_files:
+    - /home/eric/wrk/cloud/aws/ansible/nginxphp/vars/new-ubuntu-instance_vars.yml
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: New EC2 Instance
+      amazon.aws.ec2_instance:
+        name: "{{ item }}"
+        key_name: "{{ key_name }}"
+        vpc_subnet_id: "{{ subnet }}"
+        instance_type: "{{ ins_type }}"
+        security_group: "{{ sg  }}" 
+        network:
+          assign_public_ip: true
+        image_id: "{{ ami_id }}"
+        tags:
+          environment: "{{ new_env }}"
+      register: ec2
+
+    - name: Create ECR role
+      community.aws.iam_role:
+        name: ecr-read-nginx
+        assume_role_policy_document: "{{ lookup('file','../scripts/ecr_policy.json') }}"
+        description: Role for nginx
+        tags:
+          environment: "{{ new_env }}"
+      register: role

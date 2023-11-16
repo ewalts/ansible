@@ -1,0 +1,14 @@
+###> First this container needs to be created and started.
+###> During the first start the default.conf file is written to /etc/nginx/conf.d/default.conf.
+###> Do not recreate the container from image when adding php-fpm in the later step. The conf file will be created again over anything copied there.
+###> Other options are to define the a different conf file with the hostname/fqdn, etc.
+
+
+---
+services:
+  web:
+    image: nginx:latest
+    container_name: nginxphp_1
+    ports:
+      - "80:80"
+

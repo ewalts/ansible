@@ -1,0 +1,6 @@
+---
+src_dir: ./docker-files
+nginx_dir: /var/docker/web/nginx
+php_dir: /var/docker/web/php
+www_dir: /var/docker/www/html
+mysql_dir: /var/docker/mysql

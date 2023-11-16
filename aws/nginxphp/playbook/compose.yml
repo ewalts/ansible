@@ -1,0 +1,107 @@
+---
+- hosts: nginx_php
+  vars_files:
+    - ~/wrk/dev-ops/ansible/aws/nginxphp/vars/compose_vars.yml
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Wait for ssh
+      ansible.builtin.wait_for:
+        port: 22
+        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+        search_regex: OpenSSH
+        delay: 10
+      connection: local
+
+    - name: Update packages
+      shell: |
+        apt-get -y update
+
+    - name: install docker 
+      shell: |
+        apt-get -y install pip rsync docker.io docker-compose
+        pip install docker
+        systemctl start containerd
+
+    - name: Docker is present
+      ansible.builtin.package:
+        name: docker
+        state: present
+
+    - name: create web directory
+      file:
+        path: "{{ www_dir }}"
+        owner: www-data
+        state: directory
+        mode: 0775
+
+    - name: Create www directory
+      file:
+        path: "{{ nginx_dir }}"
+        state: directory
+        mode: 0775
+
+    - name: Create nginx directory
+      file: 
+        path: "{{ php_dir }}"
+        state: directory
+        mode: 0775
+
+    - name: Create php directory
+      file:
+        path: "{{ mysql_dir }}"
+        state: directory
+        mode: 0775
+
+    - name: Copy initial compose
+      ansible.builtin.copy:
+        src: "{{ src_dir }}/create-docker-compose.yml"
+        dest: "{{ nginx_dir }}/docker-compose.yml"
+
+    - name: Run docker compose
+      community.docker.docker_compose:
+        project_src: /var/docker/web/nginx
+        files:
+          - docker-compose.yml
+      register: output
+
+    - name: Show initial create results
+      ansible.builtin.debug:
+        var: output
+
+    - name: Copy initial compose
+      ansible.builtin.copy:
+        src: "{{ src_dir }}/default.conf"
+        dest: "{{ nginx_dir }}/default.conf"
+
+    - name: Copy initial compose
+      ansible.builtin.copy:
+        src: "{{ src_dir }}/update-docker-compose.yml"
+        dest: "{{ nginx_dir }}/docker-compose.yml"
+
+    - name: Copy docker build
+      ansible.builtin.copy:
+        src: "{{ src_dir }}/Dockerfile"
+        dest: "{{ nginx_dir }}/Dockerfile"
+
+    - name: Copy index.php
+      ansible.builtin.copy:
+        src: "{{ src_dir }}/index.php"
+        dest: "{{ www_dir }}/index.php"
+        mode: 0644
+
+    - name: Run docker compose
+      community.docker.docker_compose:
+        project_src: "{{ nginx_dir }}"
+        files: 
+          - docker-compose.yml
+      register: output
+
+    - name: Show update results
+      ansible.builtin.debug:
+        var: output
+
+    - name: Verify that the web service is running
+      ansible.builtin.assert:
+        that:
+          - "output.services.web.nginxphp_1.state.running"

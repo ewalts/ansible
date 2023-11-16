@@ -1,0 +1,150 @@
+#######################################################>
+###> This Ubuntu playbook performs initial settings: 
+###> Updating packages to latest.
+###> Set the prefered timzone 
+###> Configure network time protocol
+###> Change the SSH listening port
+###> Insure root cannot direclty login over SSH
+#######################################################>
+- name: Initial server setup tasks
+  hosts: nginx_php
+  remote_user: ubuntu
+  gather_facts: false
+  vars_files:
+    - /home/eric/wrk/dev-ops/ansible/aws/nginxphp/vars/server_setup_vars.yml
+
+  tasks:
+    - name: Wait for SSH
+      ansible.builtin.wait_for:
+        port: 22
+        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+        search_regex: OpenSSH
+        delay: 10
+      connection: local
+ 
+    - name: Update apt cache
+      become: true
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Update installed packages
+      become: true
+      ansible.builtin.apt:
+        name: "*"
+        state: latest
+
+    - name: Define prefered timezone
+      become: true
+      community.general.timezone:
+        name: "{{ my_timezone }}"
+
+    - name: Make sure NTP service exists
+      become: true
+      ansible.builtin.apt:
+        name: systemd-timesyncd
+        state: present
+
+    - name: Make sure NTP service is running
+      become: true
+      ansible.builtin.systemd:
+        state: started
+        name: systemd-timesyncd
+
+    - name: Create the ssh _group
+      become: true
+      ansible.builtin.group:
+        name: "{{ ssh_group }}"
+        state: present
+
+    - name: Create the ssh _group
+      become: true
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: Make sure we have a 'sudo' group
+      become: true
+      ansible.builtin.group:
+        name: sudo
+        state: present
+
+    - name: Create a user with sudo privileges
+      become: true
+      ansible.builtin.user:
+        name: "{{ my_user }}"
+        state: present
+        groups: 
+          - sudo
+          - adm
+          - docker
+          - "{{ ssh_group }}"
+        append: true
+        create_home: true
+        shell: /bin/bash
+#        password: "{{ password | password_hash('sha512', password_salt) }}"
+        password: "{{ password }}"
+        update_password: on_create
+
+    - name: Set authorized key for remote user
+      become: true
+      ansible.posix.authorized_key:
+        user: "{{ my_user }}"
+        state: present
+        key: "{{ copy_local_key }}"
+
+    - name: Allow "{{ my_user }}" to use sudo without needing a password
+      lineinfile:
+        dest: /etc/sudoers
+        line: "{{ my_user }} ALL=(ALL) NOPASSWD: ALL"
+        validate: 'visudo -cf %s'
+
+    - name: Disable remote login for root
+      become: true
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: '^PermitRootLogin yes'
+        line: 'PermitRootLogin no'
+
+    - debug: 
+        msg: Starting task 1-9-Change the SSH port
+    - name: Change the SSH port
+      become: true
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        line: 'AllowGroups "{{ ssh_group }}"'
+
+    - name: UFW - Allow http/https connections
+      become: true
+      community.general.ufw:
+        rule: allow
+        ports: 
+          - 22
+          - 80
+          - 443
+        proto: tcp
+        direction: in
+
+    - name: Brute-force attempt protection for SSH
+      become: true
+      community.general.ufw:
+        rule: limit
+        port: 22
+        proto: tcp
+
+    - name: UFW - Deny other incoming traffic and enable UFW
+      become: true
+      community.general.ufw:
+        state: enabled
+        policy: deny
+        direction: in
+
+    - name: Remove excess packages no longer needed
+      become: true
+      ansible.builtin.apt:
+        autoremove: yes
+
+    - name: Reboot all hosts
+      become: true
+      ansible.builtin.reboot:

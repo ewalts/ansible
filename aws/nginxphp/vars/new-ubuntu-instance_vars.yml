@@ -1,0 +1,11 @@
+###>  Vars generated from generate_vars_from_play.php from rewbin.org Richard Walts, Inc.
+###>   AWS - Create EC2 Instance
+new_env: nginx_php 
+item: nginx-php-1 
+key_name: my_key_pair_name 
+ins_type: t2.micro
+subnet: my_subnet
+ami_id: my_ami_id
+sg: my_security_group_name
+key_file: /local/path/to/my/key.pem
+my_ssh_key_path: /local/path/to/my/key.pem

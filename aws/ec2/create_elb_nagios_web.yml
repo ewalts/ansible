@@ -10,8 +10,8 @@
       amazon.aws.elb_classic_lb:
         state: present
         name: 'NAG-Web-Front-ELB'
-        security_group_ids: 'sg-0c18d8d383c8a4184'
-        subnets: 'subnet-064aea0316801219e'
+        security_group_ids: "{{ sg_ids}}"
+        subnets: "{{ subnet_ids }}"
         listeners:
           - protocol: http
             load_balancer_port: 80
