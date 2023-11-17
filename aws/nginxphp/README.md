@@ -3,10 +3,11 @@
 Multi-technology deployment of Nginx with PHP-FPM
 ---
 I intentionally leveraged multiple technologies to create this Docker deployment.  My intention, to demonstrate that each are capable of performing the job, and also integrate well to leverage individual strengths.
-
-
-#quick deploy.
 - Requires basic php installation.
+
+#Very easy to deploy.
+
+Run or execute the commands in this script to pull the deployment.
 
 
     #!/bin/bash
