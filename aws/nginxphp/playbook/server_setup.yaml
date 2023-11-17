@@ -95,7 +95,9 @@
     - name: Allow "{{ my_user }}" to use sudo without needing a password
       lineinfile:
         dest: /etc/sudoers
+        state: present
         line: "{{ my_user }} ALL=(ALL) NOPASSWD: ALL"
+        insertafter: EOF
         validate: 'visudo -cf %s'
 
     - name: Disable remote login for root
@@ -106,14 +108,13 @@
         regexp: '^PermitRootLogin yes'
         line: 'PermitRootLogin no'
 
-    - debug: 
-        msg: Starting task 1-9-Change the SSH port
     - name: Change the SSH port
       become: true
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         state: present
         line: 'AllowGroups "{{ ssh_group }}"'
+        insertafter: '#VersionAddendum none'
 
     - name: UFW - Allow http/https connections
       become: true
