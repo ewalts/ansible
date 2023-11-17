@@ -5,7 +5,8 @@ Multi-technology deployment of Nginx with PHP-FPM
 I intentionally leveraged multiple technologies to create this Docker deployment.  My intention, to demonstrate that each are capable of performing the job, and also integrate well to leverage individual strengths.
 
 
-#Quick deploy.
+#quick deploy.
+- Requires basic php installation.
 
 
     #!/bin/bash
@@ -18,10 +19,13 @@ I intentionally leveraged multiple technologies to create this Docker deployment
     git config core.sparseCheckout true
     echo "aws/nginxphp/" >> .git/info/sparse-checkout
     git pull origin main
-    
 
-# You will need to modify two of the vars files in aws/nginxphp/vars
-# The aws/nginxphp/vars/new-ubuntu-instance_vars.yml has these variables
+
+    
+You will need to modify two of the vars files in aws/nginxphp/vars
+---
+The aws/nginxphp/vars/new-ubuntu-instance_vars.yml has these variables
+---
 
     new_env: nginx_php
     item: nginx-php-1
@@ -38,26 +42,29 @@ I intentionally leveraged multiple technologies to create this Docker deployment
     policy_name: nginx_policy
 
 
-# The aws/nginxphp/vars/server_setup_vars.yml 
-
+The aws/nginxphp/vars/server_setup_vars.yml 
+---
     ssh_group: my_remote_admin_group
     my_timezone: 'Pacific/Honolulu'
     my_user: my_remote_user
     copy_local_key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
 
 
-# You shouldn't need to modify settings in aws/nginxphp/vars/compose_vars.yml
-    
+
+You shouldn't need to modify settings in aws/nginxphp/vars/compose_vars.yml
+---
+
     src_dir: ./docker-files
     nginx_dir: /var/docker/web/nginx
     php_dir: /var/docker/web/php
     www_dir: /var/docker/www/html
     mysql_dir: /var/docker/mysql
-    
-
-# Once you change to the nginxphp directory just execute the script to run the deployment.  The -v args are passed to each playbook that is executed.
+   
+Once you change to the nginxphp directory just execute the script to run the deployment.  The -v args are passed to each playbook that is executed.
+---
      
     cd aws/nginxphp
 
     ./create-nginx-php-app.sh -vv
+
 
