@@ -81,9 +81,13 @@
         append: true
         create_home: true
         shell: /bin/bash
-#        password: "{{ password | password_hash('sha512', password_salt) }}"
-        password: "{{ password }}"
+        password: "{{ lookup('ansible.builtin.env', 'MY_PASS') }}"
         update_password: on_create
+
+    - name: Add ubuntu user to the allowed group
+      become: true
+      ansible.builtin.shell:
+        usermod -a -G "{{ ssh_group }}" ubuntu
 
     - name: Set authorized key for remote user
       become: true
@@ -92,13 +96,12 @@
         state: present
         key: "{{ copy_local_key }}"
 
-    - name: Allow "{{ my_user }}" to use sudo without needing a password
-      lineinfile:
-        dest: /etc/sudoers
-        state: present
-        line: "{{ my_user }} ALL=(ALL) NOPASSWD: ALL"
-        insertafter: EOF
-        validate: 'visudo -cf %s'
+
+    - name: Grant SUDO access
+      become: true
+      ansible.builtin.shell: |
+        echo '{{ my_user }} ALL=(ALL) NOPASSWD:ALL'  >> '/tmp/01-{{ my_user }}-full'
+        cp -f '/tmp/01-{{ my_user }}-full'  '/etc/sudoers.d/01-{{ my_user }}-full'
 
     - name: Disable remote login for root
       become: true
@@ -116,14 +119,27 @@
         line: 'AllowGroups "{{ ssh_group }}"'
         insertafter: '#VersionAddendum none'
 
+    - name: UFW - Allow ssh connections
+      become: true
+      community.general.ufw:
+        rule: allow
+        port: '22'
+        proto: tcp
+        direction: in
+
     - name: UFW - Allow http/https connections
       become: true
       community.general.ufw:
         rule: allow
-        ports: 
-          - 22
-          - 80
-          - 443
+        port: '80'
+        proto: tcp
+        direction: in
+
+    - name: UFW - Allow http/https connections
+      become: true
+      community.general.ufw:
+        rule: allow
+        port: '443'
         proto: tcp
         direction: in
 
@@ -139,7 +155,7 @@
       community.general.ufw:
         state: enabled
         policy: deny
-        direction: in
+        direction: incoming
 
     - name: Remove excess packages no longer needed
       become: true

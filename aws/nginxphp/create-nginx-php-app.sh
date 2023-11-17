@@ -4,6 +4,23 @@
 ############################################################################################################
 #_#>
 
+###> Good for one user. This script was created with instance deployment in mind. For mutilple users I suggest random generate/log.
+my_user=$(cat vars/new-ubuntu-instance_vars.yml |grep user | awk '{print $2}')
+
+echo "Enter the password for new user [$my_user]:"
+while IFS= read -r -s -n1 pass; do
+  if [[ -z $pass ]]; then
+     echo 
+     break
+  else
+     echo -n '*'
+     password+=$pass
+  fi
+done
+
+export MY_PASS=$(./scripts/crypt_this.py $password)
+
+
 rm -f inventory/nginx-hosts
 rm -f /tmp/nginx_hosts
 rm -f /tmp/pub_nginx_hosts
@@ -43,3 +60,5 @@ echo "   ...... Waiting for 30 seconds for SSH on new instances."
 wait 30 
 ansible-playbook -u ubuntu -i inventory/nginx-hosts playbook/server_setup.yaml $1  ###> basic ubuntu setup 
 ansible-playbook -u ubuntu -i inventory/nginx-hosts playbook/compose.yml $1  ###> compose and run nginx
+
+export MY_PASS=10101010101010101010101010
