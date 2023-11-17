@@ -6,13 +6,45 @@
   gather_facts: false
 
   tasks:
+
+    - name: Create Nginx ECR Role
+      community.aws.iam_role:
+        name: "{{ iam_role }}"
+        assume_role_policy_document: "{{ lookup('file','../scripts/ecr_policy.json') }}"
+        description: Role for nginx
+        state: present
+        tags:
+          environment: "{{ new_env }}"
+#      register: role
+
+    - name: AWS IAM Instance Profile - Create
+      ansible.builtin.command: aws iam create-instance-profile
+        --instance-profile-name "{{ instance_profile }}"
+      when:  '"{{ instance_profile }}" is not defined '
+      ignore_errors: true
+
+    - name: Create Nginx ECR Policy
+      amazon.aws.iam_policy:
+        iam_type: role
+        iam_name: "{{ iam_role }}"
+        policy_name: "{{ policy_name }}"
+        policy_json: "{{ lookup('file','../scripts/ec2_apprunner_ecr_policy.json') }}"
+        state: present
+
+    - name: Attach Nginx IAM Role to Profile
+      ansible.builtin.command: aws iam add-role-to-instance-profile
+        --role-name "{{ iam_role }}"
+        --instance-profile-name "{{ instance_profile }}"
+      ignore_errors: true
+
     - name: New EC2 Instance
       amazon.aws.ec2_instance:
         name: "{{ item }}"
         key_name: "{{ key_name }}"
+        iam_instance_profile: "{{ instance_profile }}"
         vpc_subnet_id: "{{ subnet }}"
         instance_type: "{{ ins_type }}"
-        security_group: "{{ sg  }}" 
+        security_group: "{{ sg  }}"
         network:
           assign_public_ip: true
         image_id: "{{ ami_id }}"
@@ -20,11 +52,7 @@
           environment: "{{ new_env }}"
       register: ec2
 
-    - name: Create ECR role
-      community.aws.iam_role:
-        name: ecr-read-nginx
-        assume_role_policy_document: "{{ lookup('file','../scripts/ecr_policy.json') }}"
-        description: Role for nginx
-        tags:
-          environment: "{{ new_env }}"
-      register: role
+    - name: Show ec2 instance_id
+      ansible.builtin.debug:
+        var: "{{ ec2 }}"
+ 
