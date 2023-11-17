@@ -46,7 +46,7 @@ I intentionally leveraged multiple technologies to create this Docker deployment
     copy_local_key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
 
 
-# You shouldn't need to modify settings in aws/nginxphp/vars/new-ubuntu-instance_vars.yml
+# You shouldn't need to modify settings in aws/nginxphp/vars/compose_vars.yml
     
     src_dir: ./docker-files
     nginx_dir: /var/docker/web/nginx
