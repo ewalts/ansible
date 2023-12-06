@@ -1,0 +1,11 @@
+- name: Create KMS issuer
+  hosts: k8scp
+  gather_facts: false
+  tasks:
+    - name: Add helm repository for kms-issuer
+      kubernetes.core.helm:
+        name: kms-issuer
+        repo_url: https://skyscanner.github.io/kms-issuer
+        namespace: kms-issuer-system
+        create-namespace: true
+        state: present

@@ -1,0 +1,35 @@
+- name: submit vars to ssm paramter store
+  hosts: localhost
+  gather_facts: false
+  vars:
+    region: eu-west-1
+  tasks:
+    - name: Store New Parameter $name
+      community.aws.ssm_parameter:
+        name: "{{ item.name }}"
+        region: "{{ region }}"
+        description: Elastic k8s Project parameters
+        value: "{{ item.value }}"
+        tags:
+          environment: elastic-k8s
+          version: 1.0
+      loop:
+        - { name: "playbook_host_group",value: "elk-k8s-cp" }
+        - { name: "ssh_key",value: "elk-k8s" }
+        - { name: "vpc_subnet",value: "subnet-0bexxxxx" }
+        - { name: "ami_id",value: "ami-0c" }
+        - { name: "new_sg",value: "00-Elastic-k8s-mgmt" }
+        - { name: "new_env",value: "elastic-k8s" }
+        - { name: "my_ssh_key_path",value: "k8s.pem" }
+        - { name: "my_elb",value: "00-Elastic-ELB" }
+        - { name: "iam_role",value: "00-ElasticRole" }
+        - { name: "instance_profile",value: "00-ElasticProfile" }
+        - { name: "iam_name",value: "00-ElasticRole" }
+        - { name: "policy_name",value: "00-ElasticPolicy" }
+        - { name: "role-name",value: "00-ElasticRole" }
+        - { name: "ins_type",value: "t2.medium" }
+        - { name: "key_name",value: "elk-k8s" }
+        - { name: "subnet",value: "subnet" }
+        - { name: "ami_id",value: "ami-0c" }
+        - { name: "key_file",value: "k8s.pem" }
+        - { name: "my_ssh_key_path",value: "k8s.pem" }
