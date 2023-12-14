@@ -12,7 +12,7 @@ Many of the shelf solutions make things simple. But cost significantly more.
 
 
 #Overview:
- The process begins by creating dependencies in AWS: 
+- The process begins by creating dependencies in AWS: 
   [subnet, security group, iam policy, role, instance-profile, ELB, host A DNS record].
  One EC2 instance is created. The Ubuntu AMI could come straight from the AWS catalog.
   Currently using Ubuntu 22.04 LTS. 
@@ -35,18 +35,18 @@ Many of the shelf solutions make things simple. But cost significantly more.
 
  - Sample output/deployment_register_vars.yml
 
-    vpc_id: vpc-03171xxxxxxxxxxxxxxx
-    subnet_id: subnet-015xxxxxxxxxxxxxx
-    sg_id: sg-082e894xxxxxxxxxxxx
-    iam_role: AROxxxxxxxxxxxxxx
-    iam_policy: 01-k8s-w2-EC2Policy
-    instance_profile: 01-k8s-w2-EC2Profile
-    elb: 01-k8s-w2-lb01
-    instance_id: i-094xxxxxxxxxxxxxxxxxxxx
-    dns_record: 34.x.x.x A 01-k8s-cp.west2.mydomain.edu.
-    ami_id: ami-02c7xxxxxxxxxxxxxxx
-    lt_id: lt-00e4xxxxxxxxxxxxx
-    asg_id: arn:aws:autoscaling:us-west-2:xxxx:autoScalingGroup:09sbs88f-xxxx-xxx2-xxd2-xxxxxa079:autoScalingGroupName/01-k8s-w2-cl
+      vpc_id: vpc-03171xxxxxxxxxxxxxxx
+      subnet_id: subnet-015xxxxxxxxxxxxxx
+      sg_id: sg-082e894xxxxxxxxxxxx
+      iam_role: AROxxxxxxxxxxxxxx
+      iam_policy: 01-k8s-w2-EC2Policy
+      instance_profile: 01-k8s-w2-EC2Profile
+      elb: 01-k8s-w2-lb01
+      instance_id: i-094xxxxxxxxxxxxxxxxxxxx
+      dns_record: 34.x.x.x A 01-k8s-cp.west2.mydomain.edu.
+      ami_id: ami-02c7xxxxxxxxxxxxxxx
+      lt_id: lt-00e4xxxxxxxxxxxxx
+      asg_id: arn:aws:autoscaling:us-west-2:xxxx:autoScalingGroup:09sbs88f-xxxx-xxx2-xxd2-xxxxxa079:autoScalingGroupName/01-k8s-w2-cl
  
 
 
