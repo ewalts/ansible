@@ -13,20 +13,40 @@ Many of the shelf solutions make things simple. But cost significantly more.
 
 #Overview:
  The process begins by creating dependencies in AWS: 
-  [subnet, sg, iam-role, instance-profile, ELB, DNS record].
+  [subnet, security group, iam policy, role, instance-profile, ELB, host A DNS record].
+ One EC2 instance is created. The Ubuntu AMI could come straight from the AWS catalog.
+  Currently using Ubuntu 22.04 LTS. 
  
- Next configures the initial Ubuntu Instance. The AMI can be from the AWS catalog.
- Currently using Ubuntu 22.04 LTS.  It runs several server setup steps, configuring a user,
- firewall settings, NTP service, updates current packages, installs Java, boto, aws-cli, etc.
+ The deployment process defines some of my standard configurtions to the initial Ubuntu Instance. 
+ Including, not limited to: firewall settings, SSH group membership restrictions, NTP service, currently installed packages updated, installs Java, boto, aws-cli, etc.
 
- After basic configurations, it imprts the install/configure play for Kubernetes apps container runtime.
+ After basic configurations, runs the install/configure play for Kubernetes apps container runtime.
 
- Once all the software is installed, the AMI is created to be sued with the ASG.
+ After the software is installed on the first instance, it is cloned into the AMI for the ASG launch template.
 
  After the AMI is created, the cluster initialization play is imorted. After installing Calico Tigera operator, the join command/token is generated and stored in an s3 bucket.  
 
  The user-data script used with ASG fetches and runs that command joining the worker nodes to the cluster.
  
+# The deployment records identfying information for each service created.
+ -  The default location where these details are stored: [~/.ansible/output/deployment_register_vars.yml]
+ -  This is useful to rollback the deployment.
+ -  One future enhancement will include the ability for automatic rollback for everything deployed in the event of a task failure.
+
+ - Sample output/deployment_register_vars.yml
+
+    vpc_id: vpc-03171xxxxxxxxxxxxxxx
+    subnet_id: subnet-015xxxxxxxxxxxxxx
+    sg_id: sg-082e894xxxxxxxxxxxx
+    iam_role: AROxxxxxxxxxxxxxx
+    iam_policy: 01-k8s-w2-EC2Policy
+    instance_profile: 01-k8s-w2-EC2Profile
+    elb: 01-k8s-w2-lb01
+    instance_id: i-094xxxxxxxxxxxxxxxxxxxx
+    dns_record: 34.x.x.x A 01-k8s-cp.west2.mydomain.edu.
+    ami_id: ami-02c7xxxxxxxxxxxxxxx
+    lt_id: lt-00e4xxxxxxxxxxxxx
+    asg_id: arn:aws:autoscaling:us-west-2:xxxx:autoScalingGroup:09sbs88f-xxxx-xxx2-xxd2-xxxxxa079:autoScalingGroupName/01-k8s-w2-cl
  
 
 
