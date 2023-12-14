@@ -10,6 +10,9 @@
   hosts: ec2hosts
   remote_user: ubuntu
   gather_facts: false
+  vars_prompt:
+    - name: password
+      prompt: Please provide creation password for "{{ my_user }}".
   vars_files:
     - vars/server_setup_vars.yml
     - vars/asg_vars.yml
@@ -94,13 +97,13 @@
         unzip awscliv2.zip
         sudo ./aws/install
    
-    - name: Create the ssh _group
+    - name: Create the ssh group
       become: true
       ansible.builtin.group:
         name: "{{ ssh_group }}"
         state: present
 
-    - name: Create the ssh _group
+    - name: Create the docker group
       become: true
       ansible.builtin.group:
         name: docker

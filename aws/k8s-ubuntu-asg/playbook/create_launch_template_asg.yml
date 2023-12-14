@@ -22,7 +22,8 @@
       amazon.aws.ec2_vpc_subnet_info:
         filters:
           vpc-id: "{{ vpc_id }}"
-          "tag:Name": "{{ ncom_tag_name }}"
+          "tag:Name": "{{ subnet_tag_name }}"
+          "tag:environment": "{{ new_env }}"
       register: subnet_info
 
     - name: Show security group id
@@ -66,11 +67,17 @@
         image_id: "{{ ami_info['images'][0]['image_id'] }}"
         instance_type: "{{ ins_type }}"
         key_name: sc-k8s
-      register: lt
+      register: lt_info
+    - debug:
+        msg: "{{ lt_info }}"
 
-#    - name: Delay play for launch template to fully create
-#      ansible.builtin.wait_for:
-#        timeout: 60
+    - name: Deployment Record Upate launch template
+      lineinfile:
+        state: present
+        create: true
+        path: "{{ deployment_log }}"
+        regexp: 'lt_id:'
+        line: "lt_id: {{ lt_info['template']['launch_template_id'] }}"
 
     - name: create auto scaling group
       amazon.aws.autoscaling_group:
@@ -88,4 +95,14 @@
         max_size: 3
         desired_capacity: 2
         region: "{{ region }}"
+      register: asg_info
+    - debug:
+        msg: "{{ asg_info }}"
 
+    - name: Deployment Record Update DNS Record
+      lineinfile:
+        state: present
+        create: true
+        path: "{{ deployment_log }}"
+        regexp: 'asg_id:'
+        line: "asg_id: {{ asg_info['auto_scaling_group_arn'] }}"

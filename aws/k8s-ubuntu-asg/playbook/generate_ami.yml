@@ -30,4 +30,16 @@
           Service: "{{ tags_service }}"
       register: ami
       ignore_errors: true
+      register: ami_info
+
+    - debug:
+        msg: "{{ ami_info }}"
+
+    - name: Deployment Record Upatee AMI 
+      lineinfile:
+        state: present
+        create: true
+        path: "{{ deployment_log }}"
+        regexp: 'ami_id:'
+        line: "ami_id: {{ ami_info['image_id'] }}"
 

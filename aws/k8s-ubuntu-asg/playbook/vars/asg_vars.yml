@@ -34,7 +34,7 @@ region: us-west-2
 az: us-west-2c
 s3_bucket: k8s-w2
 #################################
-
+deployment_log: "~/.ansible/output/deployment_register.log"
 my_ip: x.x.x.x/32
  ###> my_elb: k8s-service-lb
  ###> sg_id:                      #  registerd var or not   - "{{ sec_group_info['security_groups'][0]['group_id'] }}"
@@ -51,3 +51,4 @@ asg_name: 01-k8s-w2-cl
  ###> Subnetting existing cidr_blocks of existing VPCs is usually not an issue.
  ###> new_vpc_app: k8s  ###>  If your using large instances or multi-az anyway don't care which zone. 
  ###> new_vpc_purpose: k8s_cluster 
+s3_bucket: s3://MY_BUCKET

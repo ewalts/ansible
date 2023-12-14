@@ -1,0 +1,166 @@
+ok: [localhost] => {
+    "msg": {
+        "changed": true,
+        "default_template": {
+            "create_time": "2023-12-13T13:09:37+00:00",
+            "created_by": "arn:aws:iam::683853257660:user/ericw",
+            "default_version": true,
+            "launch_template_data": {
+                "block_device_mappings": [
+                    {
+                        "device_name": "/dev/sdb",
+                        "ebs": {
+                            "delete_on_termination": true,
+                            "encrypted": false,
+                            "volume_size": 22,
+                            "volume_type": "gp2"
+                        }
+                    }
+                ],
+                "credit_specification": {
+                    "cpu_credits": "Unlimited"
+                },
+                "iam_instance_profile": {
+                    "arn": "arn:aws:iam::683853257660:instance-profile/01-k8s-w2-EC2Profile"
+                },
+                "image_id": "ami-01b60b565a73291fc",
+                "instance_type": "t2.medium",
+                "key_name": "sc-k8s",
+                "monitoring": {
+                    "enabled": true
+                },
+                "network_interfaces": [
+                    {
+                        "associate_public_ip_address": true,
+                        "delete_on_termination": true,
+                        "device_index": 0,
+                        "groups": [
+                            "sg-082e8942f1e635b6f"
+                        ],
+                        "ipv6_address_count": 0,
+                        "subnet_id": "subnet-015a3a6d63eeafb5e"
+                    }
+                ],
+                "placement": {
+                    "availability_zone": "us-west-2c"
+                },
+                "user_data": "IyEvYmluL2Jhc2gKYXdzIHMzIGNwIHMzOi8vZXctazhzL2t1YmVybmV0ZXNfam9pbl9jb21tYW5k\nIC90bXAva3ViZXJuZXRlc19qb2luX2NvbW1hbmQKc3VkbyBzaCAvdG1wL2t1YmVybmV0ZXNfam9p\nbl9jb21tYW5kCg=="
+            },
+            "launch_template_id": "lt-08dede3ec78742190",
+            "launch_template_name": "01-k8s-w2-cl-lt",
+            "version_number": 1
+        },
+        "default_version": 1,
+        "failed": false,
+        "latest_template": {
+            "create_time": "2023-12-13T13:09:37+00:00",
+            "created_by": "arn:aws:iam::683853257660:user/ericw",
+            "default_version": true,
+            "launch_template_data": {
+                "block_device_mappings": [
+                    {
+                        "device_name": "/dev/sdb",
+                        "ebs": {
+                            "delete_on_termination": true,
+                            "encrypted": false,
+                            "volume_size": 22,
+                            "volume_type": "gp2"
+                        }
+                    }
+                ],
+                "credit_specification": {
+                    "cpu_credits": "Unlimited"
+                },
+                "iam_instance_profile": {
+                    "arn": "arn:aws:iam::683853257660:instance-profile/01-k8s-w2-EC2Profile"
+                },
+                "image_id": "ami-01b60b565a73291fc",
+                "instance_type": "t2.medium",
+                "key_name": "sc-k8s",
+                "monitoring": {
+                    "enabled": true
+                },
+                "network_interfaces": [
+                    {
+                        "associate_public_ip_address": true,
+                        "delete_on_termination": true,
+                        "device_index": 0,
+                        "groups": [
+                            "sg-082e8942f1e635b6f"
+                        ],
+                        "ipv6_address_count": 0,
+                        "subnet_id": "subnet-015a3a6d63eeafb5e"
+                    }
+                ],
+                "placement": {
+                    "availability_zone": "us-west-2c"
+                },
+                "user_data": "IyEvYmluL2Jhc2gKYXdzIHMzIGNwIHMzOi8vZXctazhzL2t1YmVybmV0ZXNfam9pbl9jb21tYW5k\nIC90bXAva3ViZXJuZXRlc19qb2luX2NvbW1hbmQKc3VkbyBzaCAvdG1wL2t1YmVybmV0ZXNfam9p\nbl9jb21tYW5kCg=="
+            },
+            "launch_template_id": "lt-08dede3ec78742190",
+            "launch_template_name": "01-k8s-w2-cl-lt",
+            "version_number": 1
+        },
+        "latest_version": 1,
+        "template": {
+            "create_time": "2023-12-13T13:09:37+00:00",
+            "created_by": "arn:aws:iam::683853257660:user/ericw",
+            "default_version_number": 1,
+            "latest_version_number": 1,
+            "launch_template_id": "lt-08dede3ec78742190",
+            "launch_template_name": "01-k8s-w2-cl-lt"
+        },
+        "versions": [
+            {
+                "create_time": "2023-12-13T13:09:37+00:00",
+                "created_by": "arn:aws:iam::683853257660:user/ericw",
+                "default_version": true,
+                "launch_template_data": {
+                    "block_device_mappings": [
+                        {
+                            "device_name": "/dev/sdb",
+                            "ebs": {
+                                "delete_on_termination": true,
+                                "encrypted": false,
+                                "volume_size": 22,
+                                "volume_type": "gp2"
+                            }
+                        }
+                    ],
+                    "credit_specification": {
+                        "cpu_credits": "Unlimited"
+                    },
+                    "iam_instance_profile": {
+                        "arn": "arn:aws:iam::683853257660:instance-profile/01-k8s-w2-EC2Profile"
+                    },
+                    "image_id": "ami-01b60b565a73291fc",
+                    "instance_type": "t2.medium",
+                    "key_name": "sc-k8s",
+                    "monitoring": {
+                        "enabled": true
+                    },
+                    "network_interfaces": [
+                        {
+                            "associate_public_ip_address": true,
+                            "delete_on_termination": true,
+                            "device_index": 0,
+                            "groups": [
+                                "sg-082e8942f1e635b6f"
+                            ],
+                            "ipv6_address_count": 0,
+                            "subnet_id": "subnet-015a3a6d63eeafb5e"
+                        }
+                    ],
+                    "placement": {
+                        "availability_zone": "us-west-2c"
+                    },
+                    "user_data": "IyEvYmluL2Jhc2gKYXdzIHMzIGNwIHMzOi8vZXctazhzL2t1YmVybmV0ZXNfam9pbl9jb21tYW5k\nIC90bXAva3ViZXJuZXRlc19qb2luX2NvbW1hbmQKc3VkbyBzaCAvdG1wL2t1YmVybmV0ZXNfam9p\nbl9jb21tYW5kCg=="
+                },
+                "launch_template_id": "lt-08dede3ec78742190",
+                "launch_template_name": "01-k8s-w2-cl-lt",
+                "version_number": 1
+            }
+        ]
+    }
+}
+

@@ -2,6 +2,8 @@
 
 - hosts: ec2hosts
   gather_facts: false
+  vars_files: 
+    - vars/asg_vars.yml
   tasks:
 
     - name: Wait for ssh
@@ -68,6 +70,14 @@
 
     - debug:
         msg: "{{ kubernetes_join_command.stdout }}"
+
+    - name: Deployment Record Update k8s Cluster Join Command
+      lineinfile:
+        state: present
+        create: true
+        path: "{{ deployment_log }}"
+        regexp: 'k8s_join_command:'
+        line: "k8s_join_command: {{ kubernetes_join_command.stdout }}"
 
     - name: Save join command to S3.
       amazon.aws.s3_object:
