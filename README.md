@@ -15,6 +15,7 @@ A few have script wrappers.
 	###>
 
 * Simple play to run it pass in different inventory json.  Only handles one argument currently.
+
       - name: Update inventory yaml file inventory/inventory.yml
         shell: |
           /usr/bin/php /path-to-scripts/update_inventory.php groups
