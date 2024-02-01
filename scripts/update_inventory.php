@@ -33,12 +33,12 @@ $__dir__=__dir__;
 $yaml_inventory_file='playbook/inventory/inventory.yml';  ###> Original inventory yaml
 
 ###> Recieve and tune up the groups far json
-$in=$argv[1];  ###>  Bring in groups var arg
-$j=explode('{',$in);  ###> Getting rid of any junk along with, this may not be necessary
-$s=explode('}',$j[1]);  ###> Trailing as well
-$json='{'.$s[0].'}';  ###> put it back together
-$json=str_replace("'",'"',$json);  ###> Necessary!! Big issue I ran into, The playbook output groups double quotes, passes single as arg, decode doesn't like single
-$dump= json_decode($json, true);  ###> turn the json into array
+$in=$argv[1];		  	###>  Bring in groups var arg
+$j=explode('{',$in);			 ###> Getting rid of any junk along with, this may not be necessary
+$s=explode('}',$j[1]);			  ###> Trailing as well
+$json='{'.$s[0].'}';			 ###> put it back together
+$json=str_replace("'",'"',$json);	  ###> Necessary!! Big issue I ran into, The playbook output groups double quotes, passes single as arg, decode doesn't like single
+$dump= json_decode($json, true);	  ###> turn the json into array
 
 ###> Reorganize the json array dump as inventory yaml
 $new=array();  
@@ -57,25 +57,24 @@ foreach($dump as $key => $value){
 
 ###> Reading yaml inventory into array <********************************
 $data=yaml_parse_file($yaml_inventory_file, 0);   ###>   This is the second array
-###> end of reading yaml section  <***************************************
 
 ###> Merge the two multi-demensional arrays
 $inv=array_merge_recursive($data,$new);
-$inv=array_filter($inv);  // Attempt strip the empty elements
+$inv=array_filter($inv);  ###> Attempt strip the empty elements
 
 ###> Turn the new merged array into inventory yaml
 $yml=yaml_emit($inv, YAML_UTF8_ENCODING, YAML_ANY_BREAK);
-$yml=preg_replace('/    0: \~\n/','',$yml);  // strage elements generated between the merge and yaml_emit ['   0: ~'].
+$yml=preg_replace('/    0: \~\n/','',$yml);  ###> strage elements generated between the merge and yaml_emit ['   0: ~'].
 
 ###> Backup the original inventory file
 $d=date('Y-m-d');
 $bkp=$yaml_inventory_file."_backup_".$d;
-copy($yaml_inventory_file, $bkp); ###> 
+copy($yaml_inventory_file, $bkp); ###>
 
 ###> recreate the inventory file
 $yHandle = fopen($yaml_inventory_file,'w');
 ###> 
-if(!fwrite($yHandle,$yml)){
+if(!fwrite($yHandle,$yml)){   ###> 
 	echo "FAILURE: Error to write the new inventory file.";
 	copy($bkp,$yaml_inventory_file); ###> copy the file back to the original location
 } 
