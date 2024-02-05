@@ -73,7 +73,6 @@
       shell: |
         chown mysql:mysql /data0/mysql
         rsync -av /var/lib/mysql/ /data0/mysql/
-      when: blue == false
       ignore_errors: true
 
     - name: Enable mysql.service
