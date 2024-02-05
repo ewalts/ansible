@@ -1,0 +1,18 @@
+- name: Dump installed packages
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Gather package facts
+      ansible.builtin.package_facts:
+        manager: auto
+      register: ansible_facts
+
+    - name: Write json file
+      copy:
+        dest: /tmp/package_dump.json
+        mode: 0644
+        content: "{{ ansible_facts }}"
+
+    - name: Run the PHP create yaml
+      ansible.builtin.shell: |
+        /full-path/php/bin/fact_array_play.php 
