@@ -9,7 +9,7 @@ $out_ex="\n\n###> eval $(./private_vars.sh)  will set these env vars into your e
 $out_va="\n\n###> Copy and uncomment this into included vars file\n";
 $unset_out="#!/bin/bash\n ###> This script should unset the env vars previously exported\n";
 $go=false;
-$lk4='###> Private vars change set these use environment';
+$lk4='###> Private env vars';
 $stop4'###> End private env vars';
 $h=fopen('private_vars.sh', 'a+');
 
