@@ -10,7 +10,7 @@ $out_va="\n\n###> Copy and uncomment this into included vars file\n";
 $unset_out="#!/bin/bash\n ###> This script should unset the env vars previously exported\n";
 $go=false;
 $lk4='###> Private env vars';
-$stop4'###> End private env vars';
+$stop4='###> End private env vars';
 $h=fopen('private_vars.sh', 'a+');
 
 while($line=fgets($h)){
