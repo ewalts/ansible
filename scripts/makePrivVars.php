@@ -50,5 +50,5 @@ if(!fwrite($unH, $unset_out)){
 	exec("chmod 0700 unset_vars.sh",$out);
 	print_r($out);
 }
-
+fclose($unH);
 ?>
